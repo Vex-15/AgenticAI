@@ -1,0 +1,16 @@
+
+[project]
+name = "langgraph-learning"
+version = "0.1.0"
+description = "Learning LangGraph and Agentic AI"
+requires-python = ">=3.10"
+dependencies = [
+    "langgraph",
+    "langchain",
+    "langchain-openai",
+    "python-dotenv",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
