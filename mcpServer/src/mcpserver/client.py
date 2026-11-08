@@ -1,3 +1,5 @@
+import os
+import asyncio
 from dotenv import load_dotenv
 from langchain.prebuilt import create_react_agent
 from langchain_groq import ChatGroq
@@ -5,24 +7,22 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 
 load_dotenv()
 
-import asyncio
 
 async def main():
     client = MultiServerMCPClient(
         {
-            "main":{
-                "command":"python",
-                "args": ["\src\mcpserver\main.py"],
-                "transport":"stdio"
+            "main": {
+                "command": "python",
+                "args": ["src/mcpserver/main.py"],
+                "transport": "stdio"
             },
-            "weather":{
-                "url" : "http://127.0.0.1:8000/mcp",
-                "transport" : "streamable_http"
+            "weather": {
+                "url": "http://127.0.0.1:8000/mcp",
+                "transport": "streamable_http"
             }
         }
     )
 
-    import os
     os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 
     tools = await client.get_tools()
@@ -33,6 +33,11 @@ async def main():
 
     math_response = await agent.invoke(
         {
-            "messages"
+            "messages": [{
+                "role": "user",
+                "content": "What is 2 + 2?"
+            }]
         }
     )
+
+    print("Math response:", math_response['messages'][-1].content)
