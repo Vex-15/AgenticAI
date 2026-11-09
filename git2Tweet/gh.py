@@ -1,3 +1,4 @@
+from scrub import scrub
 import os
 
 import requests
@@ -38,4 +39,5 @@ def format_diff(commit: dict, max_chars: int = 6000) -> str:
     for f in commit["files"]:
         patch = f.get("patch", "(binary or too large)")
         parts.append(f"--- {f['filename']} ({f['status']})\n{patch}")
-    return "\n\n".join(parts)[:max_chars]  # cap size so the LLM isn't flooded
+    # cap size so the LLM isn't flooded
+    return scrub("\n\n".join(parts))[:max_chars]

@@ -14,6 +14,8 @@ from urllib.parse import urlencode
 from langgraph.graph import END
 from langgraph.types import interrupt, Command
 from langgraph.checkpoint.memory import MemorySaver
+import sys
+import store
 
 # 1. Tools: the docstring is what the model reads to decide when to use it
 
@@ -76,7 +78,7 @@ def post(state: State):
     url = "https://twitter.com/intent/tweet?" + \
         urlencode({"text": state["tweet"]})
     webbrowser.open(url)    # opens X with the tweet prefilled, you press Post
-    return {"status": "posted"}
+    return {"status": "opened"}
 
 
 def after_approve(state: State):
