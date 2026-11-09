@@ -13,22 +13,28 @@ headers = {
     "Authorization": f"Bearer {TOKEN}",
     "Accept": "application/vnd.github+json",
 }
+
+
 # 1. list the latest commit
-url = f"https://api.github.com/repos/{OWNER}/{REPO}/commits"
-resp = requests.get(url, headers=headers, params={"per_page": 1})
-resp.raise_for_status()
-sha = resp.json()[0]["sha"]
+def list_commits(n: int = 3) -> list[dict]:
+    r = requests.get(BASE, headers=HEADERS, params={"per_page": n})
+    r.raise_for_status()
+    return [
+        {"sha": c["sha"], "message": c["commit"]["message"].split("\n")[0]}
+        for c in r.json()
+    ]
+
 
 # 2. fetch that commit in full (this includes the diff)
-resp = requests.get(f"{url}/{sha}", headers=headers)
-resp.raise_for_status()
-commit = resp.json()
+def get_commit(sha: str) -> dict:
+    r = requests.get(f"{BASE}/{sha}", headers=HEADERS)
+    r.raise_for_status()
+    return r.json()
 
-print("SHA:", sha[:7])
-print("Message:", commit["commit"]["message"])
-print("Author:", commit["commit"]["author"]["name"])
-print()
-for f in commit["files"]:
-    print(
-        f"--- {f['filename']} ({f['status']}, +{f['additions']} -{f['deletions']})")
-    print(f.get("patch", "(no patch, probably binary)"))
+
+def format_diff(commit: dict, max_chars: int = 6000) -> str:
+    parts = []
+    for f in commit["files"]:
+        patch = f.get("patch", "(binary or too large)")
+        parts.append(f"--- {f['filename']} ({f['status']})\n{patch}")
+    return "\n\n".join(parts)[:max_chars]  # cap size so the LLM isn't flooded
