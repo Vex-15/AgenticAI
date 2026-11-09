@@ -8,8 +8,9 @@ load_dotenv(r"F:\Vedant\Projects\AgenticAI\git2tweet\.env")
 TOKEN = os.environ["GITHUB_TOKEN"]
 OWNER = "Vex-15"
 REPO = "Go-shop"
+BASE = f"https://api.github.com/repos/{OWNER}/{REPO}/commits"
 
-headers = {
+HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
     "Accept": "application/vnd.github+json",
 }
